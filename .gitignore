@@ -1,0 +1,109 @@
+# Ignore Visual Studio temporary files, build results, and
+# user-specific files
+*.DS_Store
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.ilk
+*.log
+*.userprefs
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.dbmdl
+*.opendb
+*.VC.db
+*.vscode/
+
+# Ignore build directories
+**/bin/
+**/obj/
+**/out/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.vspscc
+*.vssscc
+
+# Styles and design time working files
+_design/
+gldesign/
+
+# Azure Functions local settings file
+local.settings.json
+
+# Visual Studio 2019 files
+.vs/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# WebAssembly files (Blazor, etc.)
+wwwroot/
+
+# Publish outputs
+publish/
+
+# Resharper files
+_ReSharper*
+*.DotSettings.user
+
+# Azure Functions artifacts
+**/*.local.settings.json
+**/obj/dotnet-*
+**/bin/publish/
+
+# Ignore MacOS files
+.DS_Store
+
+# Dependency folders
+node_modules/
+jspm_packages/
+
+# Debug folder for IDEs
+.Dbg/
+
+# Coverage Reports
+coverage/
+
+# Ignore NuGet packages
+*.nupkg
+# Ignore Package Restore files
+*.sln.ide.json
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Migrations
+**/Migrations/
