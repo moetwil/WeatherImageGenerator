@@ -21,8 +21,7 @@ public class GetJob
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "jobs/{jobId}")] HttpRequest req, string jobId)
     {
         _logger.LogInformation("Get Job request received for job ID: {jobId}", jobId);
-        var res = await _jobService.GetJobAsync();
-        return new OkObjectResult("Welcome to Azure Functions!");
+        return await _jobService.GetJobAsync(jobId);
         
     }
 

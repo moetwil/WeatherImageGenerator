@@ -20,30 +20,30 @@ public class JobService
     public async Task<Guid> StartJobAsync()
     {
         _logger.LogInformation("Starting job...");
-        var jobId = Guid.NewGuid();
+        var jobId = Guid.NewGuid().ToString(); // Create a unique job ID
         await AddJobStatusToTableAsync(jobId, "Created");
         await AddJobToQueueAsync(jobId);
-        return jobId;
+        return Guid.Parse(jobId); // Return as Guid if needed
     }
     
-    private async Task AddJobToQueueAsync(Guid jobId)
+    private async Task AddJobToQueueAsync(string jobId)
     {
         _logger.LogInformation("Adding job to queue...");
         await _queueClient.CreateIfNotExistsAsync();
-        var message = jobId.ToString();
+        var message = jobId; // No need to convert to string, it's already a string
         await _queueClient.SendMessageAsync(message);
         _logger.LogInformation("Job added to queue.");
     }
     
-    private async Task AddJobStatusToTableAsync(Guid jobId, string status)
+    private async Task AddJobStatusToTableAsync(string jobId, string status)
     {
         _logger.LogInformation($"Updating job status in Table Storage for Job ID: {jobId}");
+        
         var jobStatus = new JobStatus
         {
-            RowKey = jobId.ToString(),
+            JobId = jobId, // Set the unique job ID
             Status = status,
             CreatedTime = DateTime.UtcNow,
-            Timestamp = DateTimeOffset.UtcNow
         };
 
         await _tableClient.CreateIfNotExistsAsync();
