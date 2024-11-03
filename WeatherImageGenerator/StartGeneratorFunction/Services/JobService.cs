@@ -1,3 +1,4 @@
+using System.Text;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Logging;
@@ -30,8 +31,9 @@ public class JobService
     {
         _logger.LogInformation("Adding job to queue...");
         await _queueClient.CreateIfNotExistsAsync();
-        var message = jobId; // No need to convert to string, it's already a string
-        await _queueClient.SendMessageAsync(message);
+        var message = jobId; 
+        var bytes = Encoding.UTF8.GetBytes(message);
+        await _queueClient.SendMessageAsync(Convert.ToBase64String(bytes));
         _logger.LogInformation("Job added to queue.");
     }
     

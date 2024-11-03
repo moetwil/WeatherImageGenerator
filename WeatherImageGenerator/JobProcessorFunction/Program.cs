@@ -23,7 +23,7 @@ var host = new HostBuilder()
 
         // Register the ImageQueueClient
         var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-        var imageQueueName = Environment.GetEnvironmentVariable("ImageQueue");
+        var imageQueueName = Environment.GetEnvironmentVariable("ImageQueueName");
         var imageQueueClient = new QueueClient(connectionString, imageQueueName);
         imageQueueClient.CreateIfNotExists();
         services.AddSingleton(imageQueueClient);

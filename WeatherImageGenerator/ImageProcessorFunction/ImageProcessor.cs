@@ -9,7 +9,7 @@ namespace ImageProcessorFunction;
 public class ImageProcessor
 {
     private readonly ILogger<ImageProcessor> _logger;
-    private readonly string _imageQueue;
+    private readonly string _imageQueueName;
     private readonly ImageProcessorService _imageProcessorService;
 
 
@@ -18,11 +18,11 @@ public class ImageProcessor
     {
         _logger = logger;
         _imageProcessorService = imageProcessorService;
-        _imageQueue = configuration["ImageQueue"];
+        _imageQueueName = configuration["ImageQueueName"];
     }
 
     [Function(nameof(ImageProcessor))]
-    public async Task Run([QueueTrigger("%ImageQueue%", Connection = "")] QueueMessage message)
+    public async Task Run([QueueTrigger("%ImageQueueName%", Connection = "")] QueueMessage message)
     {
         _logger.LogInformation("Queue triggered");
         await _imageProcessorService.ProcessImageAsync(message.MessageText);

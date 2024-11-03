@@ -13,7 +13,7 @@ var host = new HostBuilder()
 
         // Queue
         var queueConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-        var queueName = Environment.GetEnvironmentVariable("QueueName");
+        var queueName = Environment.GetEnvironmentVariable("JobQueueName");
         services.AddSingleton(new QueueClient(queueConnectionString, queueName));
 
         // Table Storage

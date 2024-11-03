@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Azure.Data.Tables;
 using Azure.Storage.Queues;
@@ -58,7 +59,9 @@ public class JobProcessorService
         _logger.LogInformation("Adding image to queue...");
         await _imageQueueClient.CreateIfNotExistsAsync();
         var message = JsonSerializer.Serialize(new { JobId = jobId, Station = station, ImageUrl = imageUrl });
-        await _imageQueueClient.SendMessageAsync(message);
+        
+        var bytes = Encoding.UTF8.GetBytes(message);
+        await _imageQueueClient.SendMessageAsync(Convert.ToBase64String(bytes));
         _logger.LogInformation("Image added to queue.");
     }
     
