@@ -25,7 +25,7 @@ public class BlobStorageService
             await containerClient.CreateIfNotExistsAsync(PublicAccessType.None);
 
             // Create the blob name with the desired path
-            string blobName = $"{jobId}/{imageFileName}.png";
+            string blobName = $"{jobId}/{imageFileName.Replace(" ", "")}.png";
             var blobClient = containerClient.GetBlobClient(blobName);
 
             // Upload the image stream to the blob
