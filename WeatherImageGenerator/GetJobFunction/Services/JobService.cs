@@ -22,7 +22,7 @@ public class JobService
         
         if (new[] { "Created", "InProgress" }.Contains(jobStatus.Status))
         {
-            return new OkObjectResult("Job is not finished yet. Current jobstatus: " + jobStatus.Status);
+            return new OkObjectResult(new { Status = jobStatus.Status, Message = "The job has not finished yet" });
         }
 
         return new OkObjectResult(new { Status = "Completed", ImageUrls = jobStatus.ImageUrls });
