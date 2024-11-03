@@ -1,5 +1,12 @@
 {
     "version": "2.0",
+    "queues": {
+        "batchSize": 16,
+        "maxDequeueCount": 10,
+        "visibilityTimeout": "00:00:30",
+        "messageRetentionDuration": "00:10:00",
+        "maxPollingInterval": "00:00:05"
+    },
     "logging": {
         "applicationInsights": {
             "samplingSettings": {
@@ -8,8 +15,5 @@
             },
             "enableLiveMetricsFilters": true
         }
-    },
-    "queues": {
-        "maxDequeueCount": 10
     }
 }

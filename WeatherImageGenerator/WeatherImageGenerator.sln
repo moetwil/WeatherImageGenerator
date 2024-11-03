@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartGeneratorFunction", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobProcessorFunction", "JobProcessorFunction\JobProcessorFunction.csproj", "{469F888E-3E72-4214-9A3F-0D79D690D4E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessorFunction", "ImageProcessorFunction\ImageProcessorFunction.csproj", "{2DBBAF06-54CF-489B-BCBE-D6EB66C75B65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{469F888E-3E72-4214-9A3F-0D79D690D4E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469F888E-3E72-4214-9A3F-0D79D690D4E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{469F888E-3E72-4214-9A3F-0D79D690D4E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBBAF06-54CF-489B-BCBE-D6EB66C75B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBBAF06-54CF-489B-BCBE-D6EB66C75B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBBAF06-54CF-489B-BCBE-D6EB66C75B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBBAF06-54CF-489B-BCBE-D6EB66C75B65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
