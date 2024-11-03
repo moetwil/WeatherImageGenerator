@@ -17,5 +17,6 @@ public class JobStatus : ITableEntity
     public string Status { get; set; } 
     public DateTime CreatedTime { get; set; } 
     public DateTime? CompletedTime { get; set; }
-    public string[] ImageUrls { get; set; }
+    public string ImageUrls { get; set; }
+
 }
