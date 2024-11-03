@@ -68,6 +68,7 @@ public class JobProcessorService
         {
             var existingJob = await _tableClient.GetEntityIfExistsAsync<JobStatus>("JobPartition", jobId);
             
+            
             if (existingJob.HasValue)
             {
                 var jobStatus = existingJob.Value;
@@ -86,14 +87,5 @@ public class JobProcessorService
             _logger.LogError(ex, "Error updating job status");
             throw;
         }
-        // var jobStatus = new JobStatus
-        // {
-        //     JobId = jobId,
-        //     Status = status,
-        //     CreatedTime = DateTime.UtcNow
-        // };
-        //
-        // await _tableClient.UpsertEntityAsync(entity);
-        // _logger.LogInformation($"Job {jobId} status updated to {status}");
     }
 }
