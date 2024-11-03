@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
+using Azure.Data.Tables;
 using Azure.Storage.Queues; // Make sure to include this
 using JobProcessorFunction.Clients;
 using JobProcessorFunction.Services;
@@ -26,6 +27,11 @@ var host = new HostBuilder()
         var imageQueueClient = new QueueClient(connectionString, imageQueueName);
         imageQueueClient.CreateIfNotExists();
         services.AddSingleton(imageQueueClient);
+        
+        // Table Storage
+        var tableConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        var tableName = Environment.GetEnvironmentVariable("JobStatusTableName") ?? "JobStatus";
+        services.AddSingleton(new TableClient(tableConnectionString, tableName));
     })
     .Build();
 

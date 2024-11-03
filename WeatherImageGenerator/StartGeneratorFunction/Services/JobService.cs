@@ -21,7 +21,7 @@ public class JobService
     {
         _logger.LogInformation("Starting job...");
         var jobId = Guid.NewGuid();
-        await AddJobStatusToTableAsync(jobId, "InProgress");
+        await AddJobStatusToTableAsync(jobId, "Created");
         await AddJobToQueueAsync(jobId);
         return jobId;
     }
