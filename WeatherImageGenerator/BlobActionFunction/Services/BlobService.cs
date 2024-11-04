@@ -53,8 +53,6 @@ public class BlobService
 
     private string GenerateSasToken(string blobName)
     {
-        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-
         // Create the SAS token
         var sasBuilder = new BlobSasBuilder
         {
