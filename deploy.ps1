@@ -1,5 +1,6 @@
 # Set variables
 $solutionDirectory = "WeatherImageGenerator"
+$prefix = "luc"
 $functionAppProjects = @(
     "BlobActionFunction",
     "JobProcessorFunction",
@@ -31,7 +32,7 @@ foreach ($project in $functionAppProjects) {
 
 # Deploy each function app
 foreach ($project in $functionAppProjects) {
-    $functionAppName = "ob3bgzgha6ewy$project" # Define how your Azure function app names correspond to the projects
+    $functionAppName = "$prefix$project" # Define how your Azure function app names correspond to the projects
     Write-Host "Deploying function app: $functionAppName"
     
     # Deploy using the zip package created during the publish process
