@@ -1,23 +1,11 @@
-name: Deploy Weather Image Generation Functions
+name: Deploy to Azure Function App
 
 on:
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
-    env:
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }} # Define this in GitHub secrets
-      BLOB_ACTION_FUNCTION: ${{ secrets.BLOB_ACTION_FUNCTION }}
-      GET_JOB_FUNCTION: ${{ secrets.GET_JOB_FUNCTION }}
-      IMAGE_PROCESSOR_FUNCTION: ${{ secrets.IMAGE_PROCESSOR_FUNCTION }}
-      START_GENERATOR_FUNCTION: ${{ secrets.START_GENERATOR_FUNCTION }}
-      JOB_PROCESSOR_FUNCTION: ${{ secrets.JOB_PROCESSOR_FUNCTION }}
 
     steps:
       - name: Checkout code
@@ -26,47 +14,16 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: "7.0.x" # Adjust based on your .NET version
+          dotnet-version: "8.0.403"
 
-      - name: Login to Azure
-        uses: azure/login@v1
+      - name: Publish Function App
+        run: |
+          dotnet publish WeatherImageGenerator/${{ secrets.START_JOB_FUNCTION }} -c Release -o ./publish
+          zip -r ./publish/${{ secrets.START_JOB_FUNCTION }}.zip ./publish
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-      # Deploy BlobActionFunction
-      - name: Deploy BlobActionFunction
-        run: |
-          dotnet publish WeatherImageGeneration/BlobActionFunction/BlobActionFunction.csproj -c Release -o publish/BlobActionFunction
-          zip -r publish/BlobActionFunction.zip publish/BlobActionFunction
-          az functionapp deployment source config-zip --name $BLOB_ACTION_FUNCTION --resource-group $RESOURCE_GROUP --src "publish/BlobActionFunction.zip"
-
-      # Deploy GetJobFunction
-      - name: Deploy GetJobFunction
-        run: |
-          dotnet publish WeatherImageGeneration/GetJobFunction/GetJobFunction.csproj -c Release -o publish/GetJobFunction
-          zip -r publish/GetJobFunction.zip publish/GetJobFunction
-          az functionapp deployment source config-zip --name $GET_JOB_FUNCTION --resource-group $RESOURCE_GROUP --src "publish/GetJobFunction.zip"
-
-      # Deploy ImageProcessorFunction
-      - name: Deploy ImageProcessorFunction
-        run: |
-          dotnet publish WeatherImageGeneration/ImageProcessorFunction/ImageProcessorFunction.csproj -c Release -o publish/ImageProcessorFunction
-          zip -r publish/ImageProcessorFunction.zip publish/ImageProcessorFunction
-          az functionapp deployment source config-zip --name $IMAGE_PROCESSOR_FUNCTION --resource-group $RESOURCE_GROUP --src "publish/ImageProcessorFunction.zip"
-
-      # Deploy StartGeneratorFunction
-      - name: Deploy StartGeneratorFunction
-        run: |
-          dotnet publish WeatherImageGeneration/StartGeneratorFunction/StartGeneratorFunction.csproj -c Release -o publish/StartGeneratorFunction
-          zip -r publish/StartGeneratorFunction.zip publish/StartGeneratorFunction
-          az functionapp deployment source config-zip --name $START_GENERATOR_FUNCTION --resource-group $RESOURCE_GROUP --src "publish/StartGeneratorFunction.zip"
-
-      # Deploy JobProcessorFunction
-      - name: Deploy JobProcessorFunction
-        run: |
-          dotnet publish WeatherImageGeneration/JobProcessorFunction/JobProcessorFunction.csproj -c Release -o publish/JobProcessorFunction
-          zip -r publish/JobProcessorFunction.zip publish/JobProcessorFunction
-          az functionapp deployment source config-zip --name $JOB_PROCESSOR_FUNCTION --resource-group $RESOURCE_GROUP --src "publish/JobProcessorFunction.zip"
+          app-name: ${{ secrets.PREFIX }}${{ secrets.START_JOB_FUNCTION }} # Replace with the name of your Azure Function App
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./publish/${{ secrets.START_JOB_FUNCTION }}.zip
