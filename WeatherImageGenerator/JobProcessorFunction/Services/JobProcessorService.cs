@@ -37,15 +37,26 @@ public class JobProcessorService
         
         var weatherData = await _weatherClient.GetWeatherDataAsync(jobId);
         _logger.LogInformation($"Weather data received for job {jobId}");
+        
+        var tasks = new List<Task>();
 
         foreach (var station in weatherData.Actual.StationMeasurements)
         {
             _logger.LogInformation($"Processing station {station.StationId}");
-            await ProcessWeatherStation(jobId, station);
+            tasks.Add(ProcessWeatherStation(jobId, station));
         }
         
-        await UpdateJobStatusAsync(jobId, "Completed");
-        _logger.LogInformation($"Job {jobId} completed");
+        try
+        {
+            await Task.WhenAll(tasks);
+            await UpdateJobStatusAsync(jobId, "Completed");
+            _logger.LogInformation($"Job {jobId} completed");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error processing job {jobId}: {ex.Message}");
+            await UpdateJobStatusAsync(jobId, "Failed");
+        }
     }
 
     private async Task ProcessWeatherStation(string jobId, StationMeasurementDTO station)
