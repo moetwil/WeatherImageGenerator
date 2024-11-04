@@ -16,9 +16,10 @@ public class BlobService
     private readonly string _accountName;
     private readonly string _accountKey;
     private readonly string _baseUrl;
-    
 
-    public BlobService(BlobServiceClient blobServiceClient, ILogger<BlobService> logger, string containerName, TableClient tableClient, string accountName, string accountKey, string baseUrl)
+
+    public BlobService(BlobServiceClient blobServiceClient, ILogger<BlobService> logger, string containerName,
+        TableClient tableClient, string accountName, string accountKey, string baseUrl)
     {
         _blobServiceClient = blobServiceClient;
         _logger = logger;
@@ -41,7 +42,7 @@ public class BlobService
             // Generate SAS token for the blob
             var sasToken = GenerateSasToken(name);
             _logger.LogInformation(sasToken);
-        
+
             // Update job status with the extracted jobId
             await UpdateJobStatusAsync(jobId, sasToken);
         }
@@ -67,44 +68,35 @@ public class BlobService
         // Generate the SAS token
         string sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(
             _accountName,
-            _accountKey 
+            _accountKey
         )).ToString();
-        
+
+        _logger.LogInformation($"{_baseUrl}/{_accountName}/{_containerName}/{blobName}?{sasToken}");
+
         return $"{_baseUrl}/{_accountName}/{_containerName}/{blobName}?{sasToken}";
     }
-    
+
     private async Task UpdateJobStatusAsync(string jobId, string sasToken)
     {
         try
         {
             var existingJob = await _tableClient.GetEntityIfExistsAsync<JobStatus>("JobPartition", jobId);
-            
+
             if (existingJob.HasValue)
             {
                 var jobStatus = existingJob.Value;
 
-                // Deserialize the existing ImageUrls into a string array
-                var imageUrls = string.IsNullOrEmpty(jobStatus.ImageUrls) || jobStatus.ImageUrls == "[]" 
-                    ? new List<string>() 
+                var imageUrls = string.IsNullOrEmpty(jobStatus.ImageUrls) || jobStatus.ImageUrls == "[]"
+                    ? new List<string>()
                     : JsonSerializer.Deserialize<List<string>>(jobStatus.ImageUrls) ?? new List<string>();
 
-                // Add the new SAS token to the list
                 imageUrls.Add(sasToken);
 
-                // Serialize the updated list back to JSON
                 jobStatus.ImageUrls = JsonSerializer.Serialize(imageUrls);
 
                 await _tableClient.UpsertEntityAsync(jobStatus);
                 _logger.LogInformation($"SasToken updated for Job {jobId}");
             }
-            
-            // if (existingJob.HasValue)
-            // {
-            //     var jobStatus = existingJob.Value;
-            //     jobStatus.ImageUrls = sasToken;
-            //
-            //     await _tableClient.UpsertEntityAsync(jobStatus);
-            // }
             else
             {
                 _logger.LogWarning($"Job {jobId} not found");
@@ -116,6 +108,4 @@ public class BlobService
             throw;
         }
     }
-
-    
 }

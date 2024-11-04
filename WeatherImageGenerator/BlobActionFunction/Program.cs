@@ -10,7 +10,6 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices((context, services) =>
     {
-        // Get the container name from the configuration
         string containerName = context.Configuration["ContainerName"];
         string accountName = context.Configuration["AccountName"];
         string accountKey = context.Configuration["AccountKey"];
@@ -22,14 +21,15 @@ var host = new HostBuilder()
             var blobServiceClient = provider.GetRequiredService<BlobServiceClient>();
             var tableClient = provider.GetRequiredService<TableClient>();
             var logger = provider.GetRequiredService<ILogger<BlobService>>();
-            return new BlobService(blobServiceClient, logger, containerName, tableClient, accountName, accountKey, baseUrl);
+            return new BlobService(blobServiceClient, logger, containerName, tableClient, accountName, accountKey,
+                baseUrl);
         });
-        
+
         // Table Storage
         var tableConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
         var tableName = Environment.GetEnvironmentVariable("JobStatusTableName") ?? "JobStatus";
         services.AddSingleton(new TableClient(tableConnectionString, tableName));
-        
+
         // Register BlobServiceClient using the connection string from configuration
         string blobConnectionString = context.Configuration["AzureWebJobsStorage"];
         services.AddSingleton(new BlobServiceClient(blobConnectionString));

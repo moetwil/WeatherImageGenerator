@@ -18,11 +18,11 @@ public class GetJob
     }
 
     [Function("GetJob")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "jobs/{jobId}")] HttpRequest req, string jobId)
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "jobs/{jobId}")]
+        HttpRequest req, string jobId)
     {
         _logger.LogInformation("Get Job request received for job ID: {jobId}", jobId);
         return await _jobService.GetJobAsync(jobId);
-        
     }
-
 }

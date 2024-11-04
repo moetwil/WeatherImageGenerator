@@ -11,8 +11,9 @@ public class JobProcessor
     private readonly ILogger<JobProcessor> _logger;
     private readonly JobProcessorService _jobProcessorService;
     private readonly string _jobQueueName;
-    
-    public JobProcessor(ILogger<JobProcessor> logger, JobProcessorService jobProcessorService, IConfiguration configuration)
+
+    public JobProcessor(ILogger<JobProcessor> logger, JobProcessorService jobProcessorService,
+        IConfiguration configuration)
     {
         _logger = logger;
         _jobProcessorService = jobProcessorService;

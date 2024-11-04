@@ -11,16 +11,14 @@ var host = new HostBuilder()
     {
         services.AddHttpClient();
 
-        // Retrieve the connection string using the configuration context
         var blobServiceClient = new BlobServiceClient(context.Configuration["AzureWebJobsStorage"]);
         services.AddSingleton(blobServiceClient);
 
-        // Specify the container name you want to use
         string containerName = context.Configuration["ImageContainerName"];
 
-        // Register the BlobStorageService with the container name
-        services.AddScoped<BlobStorageService>(provider => 
-            new BlobStorageService(provider.GetRequiredService<BlobServiceClient>(), containerName, 
+        // Register the BlobStorageService
+        services.AddScoped<BlobStorageService>(provider =>
+            new BlobStorageService(provider.GetRequiredService<BlobServiceClient>(), containerName,
                 provider.GetRequiredService<ILogger<BlobStorageService>>()));
 
         // Register the ImageProcessorService

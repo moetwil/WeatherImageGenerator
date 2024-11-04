@@ -10,7 +10,8 @@ public class BlobStorageService
     private readonly BlobServiceClient _blobServiceClient;
     private readonly string _containerName;
 
-    public BlobStorageService(BlobServiceClient blobServiceClient, string containerName, ILogger<BlobStorageService> logger)
+    public BlobStorageService(BlobServiceClient blobServiceClient, string containerName,
+        ILogger<BlobStorageService> logger)
     {
         _blobServiceClient = blobServiceClient;
         _containerName = containerName;

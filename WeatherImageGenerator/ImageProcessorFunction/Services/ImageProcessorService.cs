@@ -10,27 +10,29 @@ public class ImageProcessorService
     private readonly ImageEditService _imageEditService;
     private readonly BlobStorageService _blobStorageService;
     private readonly HttpClient _httpClient;
-    
-    public ImageProcessorService(ILogger<ImageProcessorService> logger, ImageEditService imageEditService, BlobStorageService blobStorageService, HttpClient httpClient)
+
+    public ImageProcessorService(ILogger<ImageProcessorService> logger, ImageEditService imageEditService,
+        BlobStorageService blobStorageService, HttpClient httpClient)
     {
         _logger = logger;
         _imageEditService = imageEditService;
         _blobStorageService = blobStorageService;
         _httpClient = httpClient;
     }
-    
+
     public async Task ProcessImageAsync(string message)
     {
         var imageInfo = MapMessageToImageInfo(message);
         var imageStream = await FetchImageStreamAsync(imageInfo.ImageUrl);
         var texts = CreateOverlayTexts(imageInfo.Station);
-        
+
         using var editedImageStream = _imageEditService.OverlayTextOnImage(imageStream, texts);
-        
+
         await _blobStorageService.SaveImageAsync(editedImageStream, imageInfo.JobId, imageInfo.Station.StationName);
     }
-    
-    private (string text, (float x, float y) position, int fontSize, string colorHex)[] CreateOverlayTexts(StationDTO station)
+
+    private (string text, (float x, float y) position, int fontSize, string colorHex)[] CreateOverlayTexts(
+        StationDTO station)
     {
         return new[]
         {
@@ -64,7 +66,7 @@ public class ImageProcessorService
             return null;
         }
     }
-    
+
     private ImageInfoDTO MapMessageToImageInfo(string message)
     {
         try

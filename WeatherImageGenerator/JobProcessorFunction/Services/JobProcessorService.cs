@@ -34,10 +34,10 @@ public class JobProcessorService
     {
         _logger.LogInformation($"Processing job {jobId}");
         await UpdateJobStatusAsync(jobId, "Processing");
-        
+
         var weatherData = await _weatherClient.GetWeatherDataAsync(jobId);
         _logger.LogInformation($"Weather data received for job {jobId}");
-        
+
         var tasks = new List<Task>();
 
         foreach (var station in weatherData.Actual.StationMeasurements)
@@ -45,7 +45,7 @@ public class JobProcessorService
             _logger.LogInformation($"Processing station {station.StationId}");
             tasks.Add(ProcessWeatherStation(jobId, station));
         }
-        
+
         try
         {
             await Task.WhenAll(tasks);
@@ -70,19 +70,19 @@ public class JobProcessorService
         _logger.LogInformation("Adding image to queue...");
         await _imageQueueClient.CreateIfNotExistsAsync();
         var message = JsonSerializer.Serialize(new { JobId = jobId, Station = station, ImageUrl = imageUrl });
-        
+
         var bytes = Encoding.UTF8.GetBytes(message);
         await _imageQueueClient.SendMessageAsync(Convert.ToBase64String(bytes));
         _logger.LogInformation("Image added to queue.");
     }
-    
+
     private async Task UpdateJobStatusAsync(string jobId, string status)
     {
         try
         {
             var existingJob = await _tableClient.GetEntityIfExistsAsync<JobStatus>("JobPartition", jobId);
-            
-            
+
+
             if (existingJob.HasValue)
             {
                 var jobStatus = existingJob.Value;

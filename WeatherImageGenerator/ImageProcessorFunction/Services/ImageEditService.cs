@@ -17,7 +17,8 @@ namespace ImageProcessorFunction.Services
             _logger = logger;
         }
 
-        public Stream OverlayTextOnImage(Stream imageStream, (string text, (float x, float y) position, int fontSize, string colorHex)[] texts)
+        public Stream OverlayTextOnImage(Stream imageStream,
+            (string text, (float x, float y) position, int fontSize, string colorHex)[] texts)
         {
             var memoryStream = new MemoryStream();
 

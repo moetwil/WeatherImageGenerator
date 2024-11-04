@@ -5,8 +5,8 @@ using System.Text.Json;
 
 public class JobStatus : ITableEntity
 {
-    public string PartitionKey { get; set; } = "JobPartition"; // Set a constant partition key
-    public string RowKey { get; set; } // Unique identifier for the job
+    public string PartitionKey { get; set; } = "JobPartition";
+    public string RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; } = ETag.All;
 

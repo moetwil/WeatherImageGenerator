@@ -9,24 +9,24 @@ public class ImageClient
     private readonly ILogger<WeatherClient> _logger;
     private readonly HttpClient _httpClient;
     private readonly string _endpoint;
-    
+
     public ImageClient(ILogger<WeatherClient> logger, HttpClient httpClient, IConfiguration configuration)
     {
         _logger = logger;
         _httpClient = httpClient;
         _endpoint = configuration["ImageEndpoint"];
     }
-    
+
     public async Task<string> GetRandomImageUrlAsync()
     {
         try
         {
             var response = await _httpClient.GetAsync(_endpoint);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var finalUrl = response.RequestMessage.RequestUri.ToString();
-                return finalUrl; // Return the URL of the image
+                return finalUrl;
             }
             else
             {

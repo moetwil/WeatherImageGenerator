@@ -25,5 +25,4 @@ public class StartJob
         _logger.LogInformation($"Job started with ID: {jobId}");
         return new OkObjectResult(new JobDTO { JobId = jobId.ToString() });
     }
-
 }

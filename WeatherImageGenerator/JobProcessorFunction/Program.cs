@@ -19,7 +19,7 @@ var host = new HostBuilder()
         services.AddHttpClient<ImageClient>();
 
         // Register your JobProcessorService
-        services.AddScoped<JobProcessorService>(); 
+        services.AddScoped<JobProcessorService>();
 
         // Register the ImageQueueClient
         var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
@@ -27,7 +27,7 @@ var host = new HostBuilder()
         var imageQueueClient = new QueueClient(connectionString, imageQueueName);
         imageQueueClient.CreateIfNotExists();
         services.AddSingleton(imageQueueClient);
-        
+
         // Table Storage
         var tableConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
         var tableName = Environment.GetEnvironmentVariable("JobStatusTableName") ?? "JobStatus";

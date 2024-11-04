@@ -10,14 +10,14 @@ public class WeatherClient
     private readonly ILogger<WeatherClient> _logger;
     private readonly HttpClient _httpClient;
     private readonly string _endpoint;
-    
+
     public WeatherClient(ILogger<WeatherClient> logger, HttpClient httpClient, IConfiguration configuration)
     {
         _logger = logger;
         _httpClient = httpClient;
         _endpoint = configuration["WeatherEndpoint"];
     }
-    
+
     public async Task<WeatherDataDTO> GetWeatherDataAsync(string jobId)
     {
         try
@@ -32,7 +32,7 @@ public class WeatherClient
         catch (HttpRequestException ex)
         {
             _logger.LogError($"Error fetching weather data: {ex.Message}");
-            throw; 
+            throw;
         }
     }
 }

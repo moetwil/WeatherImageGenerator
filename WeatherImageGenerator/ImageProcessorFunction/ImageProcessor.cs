@@ -13,8 +13,8 @@ public class ImageProcessor
     private readonly ImageProcessorService _imageProcessorService;
 
 
-
-    public ImageProcessor(ILogger<ImageProcessor> logger, ImageProcessorService imageProcessorService, IConfiguration configuration)
+    public ImageProcessor(ILogger<ImageProcessor> logger, ImageProcessorService imageProcessorService,
+        IConfiguration configuration)
     {
         _logger = logger;
         _imageProcessorService = imageProcessorService;

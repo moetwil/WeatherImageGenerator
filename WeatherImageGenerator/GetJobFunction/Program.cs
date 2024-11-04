@@ -9,12 +9,12 @@ var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddScoped<JobService>();
-        
+
         // Table Storage
         var tableConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
         var tableName = Environment.GetEnvironmentVariable("JobStatusTableName") ?? "JobStatus";
         services.AddSingleton(new TableClient(tableConnectionString, tableName));
-        
+
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
