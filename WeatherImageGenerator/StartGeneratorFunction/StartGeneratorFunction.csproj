@@ -5,6 +5,8 @@
         <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+        <FunctionsIncluder>**\*.dll</FunctionsIncluder>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>

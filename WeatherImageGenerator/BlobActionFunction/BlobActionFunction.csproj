@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <FunctionsEnableWorkerIndexing>false</FunctionsEnableWorkerIndexing>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
@@ -15,6 +16,7 @@
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.0"/>
         <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.2.0"/>
+        <PackageReference Include="Azure.Core" Version="1.44.1" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">

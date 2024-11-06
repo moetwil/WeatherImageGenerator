@@ -1,6 +1,6 @@
 param location string = resourceGroup().location
 
-var prefix = 'luc'
+var prefix = 'lucmoetwil'
 var serverFarmName = '${prefix}sf'
 var storageAccountName = '${prefix}sta'
 
@@ -71,6 +71,7 @@ resource startGeneratorFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = 
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
+    WEBSITE_RUN_FROM_PACKAGE: '1'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(startGeneratorFunctionName)
@@ -110,6 +111,7 @@ resource jobProcessorFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
+    WEBSITE_RUN_FROM_PACKAGE: '1'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(jobProcessorFunctionName)
@@ -153,6 +155,7 @@ resource imageProcessorFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = 
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
+    WEBSITE_RUN_FROM_PACKAGE: '1'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(imageProcessorFunctionName)
@@ -190,6 +193,7 @@ resource getJobFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
   properties: {
     // function app settings
     FUNCTIONS_EXTENSION_VERSION: '~4'
+    WEBSITE_RUN_FROM_PACKAGE: '1'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
     AzureWebJobsStorage: storageAccountConnectionString
@@ -229,6 +233,7 @@ resource blobActionFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
     // function app settings
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
+    WEBSITE_RUN_FROM_PACKAGE: '1'
     WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
