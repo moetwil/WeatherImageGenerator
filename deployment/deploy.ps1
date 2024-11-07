@@ -1,14 +1,29 @@
 # parameter for resource group
 param (
     [string]$resourceGroup,
-    [string]$location
+    [string]$location,
+    [string]$prefix
 )
+
+# create resource group if it doesn't exist
+Write-Host "Checking if resource group $resourceGroup exists..."
+$resourceGroupExists = (az group exists --name $resourceGroup) -eq "true"
+
+if (-not $resourceGroupExists) {
+    Write-Host "Resource group $resourceGroup does not exist. Creating..."
+    az group create --name $resourceGroup --location $location
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Failed to create resource group $resourceGroup. Exiting."
+        exit $LASTEXITCODE
+    }
+} else {
+    Write-Host "Resource group $resourceGroup already exists. Proceeding..."
+}
+
 
 # set variables
 $solutionDirectory = "../WeatherImageGenerator"
-$prefix = "lucmoetwil"
 $functionAppProjects = @(
-    "BlobActionFunction",
     "JobProcessorFunction",
     "GetJobFunction",
     "StartGeneratorFunction",
@@ -24,7 +39,7 @@ if (Test-Path $outputDirectory) {
 
 # deploy the Bicep file to set up infrastructure
 Write-Host "Deploying infrastructure with Bicep file..."
-# az deployment group create --resource-group $resourceGroup --template-file $bicepFile --parameters location=$location
+az deployment group create --resource-group $resourceGroup --template-file $bicepFile --parameters location=$location prefix=$prefix
 
 # check if Bicep deployment was successful
 if ($LASTEXITCODE -ne 0) {

@@ -15,8 +15,7 @@ public class JobStatus : ITableEntity
         set => RowKey = value;
     }
     public string Status { get; set; } 
+    public int TotalStations { get; set; }
     public DateTime CreatedTime { get; set; } 
     public DateTime? CompletedTime { get; set; }
-    public string ImageUrls { get; set; }
-
 }

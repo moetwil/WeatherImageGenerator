@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Azure;
+using Azure.Data.Tables;
 using ImageProcessorFunction.DTOs;
 using Microsoft.Extensions.Logging;
 
@@ -10,14 +12,16 @@ public class ImageProcessorService
     private readonly ImageEditService _imageEditService;
     private readonly BlobStorageService _blobStorageService;
     private readonly HttpClient _httpClient;
+    private readonly TableClient _tableClient;
 
     public ImageProcessorService(ILogger<ImageProcessorService> logger, ImageEditService imageEditService,
-        BlobStorageService blobStorageService, HttpClient httpClient)
+        BlobStorageService blobStorageService, HttpClient httpClient, TableClient tableClient)
     {
         _logger = logger;
         _imageEditService = imageEditService;
         _blobStorageService = blobStorageService;
         _httpClient = httpClient;
+        _tableClient = tableClient;
     }
 
     public async Task ProcessImageAsync(string message)
@@ -29,6 +33,18 @@ public class ImageProcessorService
         using var editedImageStream = _imageEditService.OverlayTextOnImage(imageStream, texts);
 
         await _blobStorageService.SaveImageAsync(editedImageStream, imageInfo.JobId, imageInfo.Station.StationName);
+        
+        _logger.LogInformation($"Image processed and saved for station {imageInfo.Station.StationName}");
+        
+        var imageCount = await _blobStorageService.GetJobImageCount(imageInfo.JobId.ToString());
+        
+        var jobStatus = await FetchJobStatusAsync(imageInfo.JobId.ToString());
+        
+        if (imageCount == jobStatus?.TotalStations)
+        {
+            _logger.LogInformation($"All images processed for job {imageInfo.JobId}");
+            await UpdateJobStatusAsync(imageInfo.JobId.ToString(), "Completed");
+        }
     }
 
     private (string text, (float x, float y) position, int fontSize, string colorHex)[] CreateOverlayTexts(
@@ -82,6 +98,60 @@ public class ImageProcessorService
         catch (Exception ex)
         {
             _logger.LogError($"Unexpected error: {ex.Message}");
+            throw;
+        }
+    }
+    
+    private async Task<JobStatus?> FetchJobStatusAsync(string jobId)
+    {
+        try
+        {
+            const string partitionKey = "JobPartition";
+            _logger.LogInformation($"Fetching job status for JobId: {jobId} from Table Storage.");
+
+            var jobStatusEntity = await _tableClient.GetEntityIfExistsAsync<JobStatus>(partitionKey, jobId);
+            if (jobStatusEntity.HasValue)
+            {
+                var jobStatus = jobStatusEntity.Value;
+                return jobStatus;
+            }
+            else
+            {
+                _logger.LogWarning($"Job {jobId} not found");
+                return null;
+            }
+        }
+        catch (RequestFailedException ex)
+        {
+            _logger.LogError($"Error fetching job {jobId}: {ex.Message}");
+            return null;
+        }
+    }
+    
+    private async Task UpdateJobStatusAsync(string jobId, string status)
+    {
+        try
+        {
+            var existingJob = await _tableClient.GetEntityIfExistsAsync<JobStatus>("JobPartition", jobId);
+
+
+            if (existingJob.HasValue)
+            {
+                var jobStatus = existingJob.Value;
+                jobStatus.Status = status;
+                jobStatus.CompletedTime = DateTime.Now;
+
+                await _tableClient.UpsertEntityAsync(jobStatus);
+                _logger.LogInformation($"Job {jobId} status updated to {status}");
+            }
+            else
+            {
+                _logger.LogWarning($"Job {jobId} not found");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating job status");
             throw;
         }
     }

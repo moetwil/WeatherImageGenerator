@@ -37,6 +37,8 @@ public class JobProcessorService
 
         var weatherData = await _weatherClient.GetWeatherDataAsync(jobId);
         _logger.LogInformation($"Weather data received for job {jobId}");
+        
+        await UpdateJobStatusAsync(jobId, "Processing", weatherData);
 
         var tasks = new List<Task>();
 
@@ -49,8 +51,8 @@ public class JobProcessorService
         try
         {
             await Task.WhenAll(tasks);
-            await UpdateJobStatusAsync(jobId, "Completed");
-            _logger.LogInformation($"Job {jobId} completed");
+            // await UpdateJobStatusAsync(jobId, "Completed");
+            _logger.LogInformation($"Image messages for job: {jobId} put on the queue");
         }
         catch (Exception ex)
         {
@@ -76,7 +78,7 @@ public class JobProcessorService
         _logger.LogInformation("Image added to queue.");
     }
 
-    private async Task UpdateJobStatusAsync(string jobId, string status)
+    private async Task UpdateJobStatusAsync(string jobId, string status, WeatherDataDTO? weatherData = null)
     {
         try
         {
@@ -87,6 +89,12 @@ public class JobProcessorService
             {
                 var jobStatus = existingJob.Value;
                 jobStatus.Status = status;
+                
+                
+                if(weatherData != null)
+                {
+                    jobStatus.TotalStations = weatherData.Actual.StationMeasurements.Count;
+                }
 
                 await _tableClient.UpsertEntityAsync(jobStatus);
                 _logger.LogInformation($"Job {jobId} status updated to {status}");

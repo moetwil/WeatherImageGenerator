@@ -10,30 +10,32 @@ public class JobService
 {
     private readonly ILogger<JobService> _logger;
     private readonly TableClient _tableClient;
+    private readonly BlobService _blobService;
 
-    public JobService(ILogger<JobService> logger, TableClient tableClient)
+    public JobService(ILogger<JobService> logger, TableClient tableClient, BlobService blobService)
     {
         _logger = logger;
         _tableClient = tableClient;
+        _blobService = blobService;
     }
 
     public async Task<IActionResult> GetJobAsync(string jobId)
     {
         var jobStatus = await FetchJobStatusAsync(jobId);
-
         if (jobStatus == null)
         {
             return new NotFoundObjectResult(new { Status = "NotFound", Message = $"Job {jobId} not found" });
         }
 
-        if (new[] { "Created", "InProgress" }.Contains(jobStatus.Status))
+        var imageCount = await _blobService.GetJobImageCount(jobId);
+        _logger.LogInformation($"Found {imageCount} images for job {jobId}");
+
+        if (jobStatus.TotalStations != imageCount)
         {
             return new OkObjectResult(new { Status = jobStatus.Status, Message = "The job has not finished yet" });
         }
-
-        var imageUrls = string.IsNullOrEmpty(jobStatus.ImageUrls)
-            ? new List<string>()
-            : JsonSerializer.Deserialize<List<string>>(jobStatus.ImageUrls) ?? new List<string>();
+        
+        var imageUrls = await _blobService.GetImageUrls(jobId);
 
         return new OkObjectResult(new { Status = "Completed", ImageUrls = imageUrls });
     }
@@ -49,23 +51,6 @@ public class JobService
             if (jobStatusEntity.HasValue)
             {
                 var jobStatus = jobStatusEntity.Value;
-
-                if (!string.IsNullOrEmpty(jobStatus.ImageUrls))
-                {
-                    var imageUrls = JsonSerializer.Deserialize<List<string>>(jobStatus.ImageUrls);
-                    if (imageUrls != null)
-                    {
-                        _logger.LogInformation($"Image URLs before cleanup: {JsonSerializer.Serialize(imageUrls)}");
-
-                        for (int i = 0; i < imageUrls.Count; i++)
-                        {
-                            imageUrls[i] = CleanSasToken(imageUrls[i]);
-                        }
-
-                        jobStatus.ImageUrls = JsonSerializer.Serialize(imageUrls);
-                    }
-                }
-
                 return jobStatus;
             }
             else

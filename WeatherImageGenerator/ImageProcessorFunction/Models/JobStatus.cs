@@ -1,6 +1,5 @@
 using Azure;
 using Azure.Data.Tables;
-using System;
 
 public class JobStatus : ITableEntity
 {

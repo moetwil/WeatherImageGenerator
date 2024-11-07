@@ -1,3 +1,4 @@
+using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using ImageProcessorFunction.Services;
 using Microsoft.Azure.Functions.Worker;
@@ -10,6 +11,11 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.AddHttpClient();
+        
+        // Table Storage
+        var tableConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        var tableName = Environment.GetEnvironmentVariable("JobStatusTableName") ?? "JobStatus";
+        services.AddSingleton(new TableClient(tableConnectionString, tableName));
 
         var blobServiceClient = new BlobServiceClient(context.Configuration["AzureWebJobsStorage"]);
         services.AddSingleton(blobServiceClient);

@@ -1,6 +1,5 @@
 param location string = resourceGroup().location
-
-var prefix = 'lucmoetwil'
+param prefix string
 var serverFarmName = '${prefix}sf'
 var storageAccountName = '${prefix}sta'
 
@@ -8,7 +7,6 @@ var startGeneratorFunctionName = '${prefix}StartGeneratorFunction'
 var jobProcessorFunctionName = '${prefix}JobProcessorFunction'
 var imageProcessorFunctionName = '${prefix}ImageProcessorFunction'
 var getJobFunctionName = '${prefix}GetJobFunction'
-var blobActionFunctionName = '${prefix}BlobActionFunction'
 
 resource serverFarm 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: serverFarmName
@@ -200,52 +198,9 @@ resource getJobFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(getJobFunctionName)
     JobStatusTableName: 'jobstatus'          
-  }
-}
-
-resource blobActionFunction 'Microsoft.Web/sites@2021-03-01' = {
-  name: blobActionFunctionName
-  location: location
-  tags: resourceGroup().tags
-  identity: {
-    type: 'SystemAssigned'
-  }
-  kind: 'functionapp'
-  properties: {
-    enabled: true
-    serverFarmId: serverFarm.id
-    siteConfig: {
-      netFrameworkVersion: 'v8.0'
-      minTlsVersion: '1.2'
-      scmMinTlsVersion: '1.2'
-      http20Enabled: true
-    }
-    clientAffinityEnabled: false
-    httpsOnly: true
-    containerSize: 1536
-    redundancyMode: 'None'
-  }
-}
-
-resource blobActionFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${blobActionFunctionName}/appsettings'
-  properties: {
-    // function app settings
-    FUNCTIONS_EXTENSION_VERSION: '~4'
-    FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated'
-    WEBSITE_RUN_FROM_PACKAGE: '1'
-    WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED: '1'
-    AzureWebJobsStorage: storageAccountConnectionString
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
-    WEBSITE_CONTENTSHARE: toLower(blobActionFunctionName)
-    JobStatusTableName: 'jobstatus'
-    JobQueueName: 'jobqueue'
-    ImageQueueName: 'imagequeue'
-    ImageContainerName: 'weather-images'
-    WeatherEndpoint: 'https://data.buienradar.nl/2.0/feed/json'
-    ImageEndpoint: 'https://picsum.photos/200'
     AccountName: storageAccount.name
     AccountKey: storageAccount.listKeys().keys[0].value
     BaseUrl: storageAccount.properties.primaryEndpoints.blob
+    ImageContainerName: 'weather-images'
   }
 }

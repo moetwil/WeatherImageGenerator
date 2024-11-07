@@ -8,15 +8,17 @@ public class JobStatus : ITableEntity
     public string RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; } = ETag.All;
-
-    public string JobId
+    
+    public string JobId 
     {
         get => RowKey;
         set => RowKey = value;
     }
-
-    public string Status { get; set; }
-    public DateTime CreatedTime { get; set; }
+    public string Status { get; set; } 
+    public int TotalStations { get; set; }
+    public int StationsProcessed { get; set; }
+    public DateTime CreatedTime { get; set; } 
     public DateTime? CompletedTime { get; set; }
     public string ImageUrls { get; set; }
+
 }

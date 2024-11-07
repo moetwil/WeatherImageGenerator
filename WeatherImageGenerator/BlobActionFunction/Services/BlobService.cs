@@ -93,6 +93,7 @@ public class BlobService
                 imageUrls.Add(sasToken);
 
                 jobStatus.ImageUrls = JsonSerializer.Serialize(imageUrls);
+                jobStatus.StationsProcessed++;
 
                 await _tableClient.UpsertEntityAsync(jobStatus);
                 _logger.LogInformation($"SasToken updated for Job {jobId}");

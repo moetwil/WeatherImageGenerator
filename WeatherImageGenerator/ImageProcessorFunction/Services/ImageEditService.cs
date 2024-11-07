@@ -3,7 +3,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Fonts;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using SixLabors.ImageSharp.Drawing.Processing;
 
 namespace ImageProcessorFunction.Services
