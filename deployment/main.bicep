@@ -158,6 +158,7 @@ resource imageProcessorFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = 
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(imageProcessorFunctionName)
     ImageQueueName: 'imagequeue'
+    JobStatusTableName: 'jobstatus'
     ImageContainerName: 'weather-images'
   }
 }
