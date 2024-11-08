@@ -40,6 +40,8 @@ public class ImageProcessorService
         
         var jobStatus = await FetchJobStatusAsync(imageInfo.JobId.ToString());
         
+        _logger.LogInformation($"Image count: {imageCount}, Total stations: {jobStatus?.TotalStations}");
+        
         if (imageCount == jobStatus?.TotalStations)
         {
             _logger.LogInformation($"All images processed for job {imageInfo.JobId}");
@@ -139,7 +141,7 @@ public class ImageProcessorService
             {
                 var jobStatus = existingJob.Value;
                 jobStatus.Status = status;
-                jobStatus.CompletedTime = DateTime.Now;
+                jobStatus.CompletedTime = DateTime.UtcNow;
 
                 await _tableClient.UpsertEntityAsync(jobStatus);
                 _logger.LogInformation($"Job {jobId} status updated to {status}");
