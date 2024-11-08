@@ -20,7 +20,6 @@ if (-not $resourceGroupExists) {
     Write-Host "Resource group $resourceGroup already exists. Proceeding..."
 }
 
-
 # set variables
 $solutionDirectory = "../WeatherImageGenerator"
 $functionAppProjects = @(
@@ -130,4 +129,4 @@ foreach ($project in $functionAppProjects) {
     }
 }
 
-Write-Host "All function apps published and deployed successfully!"
+Write-Host "All function apps published successfully!"

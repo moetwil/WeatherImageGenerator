@@ -75,6 +75,7 @@ resource startGeneratorFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = 
     WEBSITE_CONTENTSHARE: toLower(startGeneratorFunctionName)
     JobStatusTableName: 'jobstatus'
     JobQueueName: 'jobqueue'
+    FUNCTIONS_AUTH_LEVEL: 'anonymous'
   }
 }
 
@@ -203,5 +204,6 @@ resource getJobFunctionConfig 'Microsoft.Web/sites/config@2021-03-01' = {
     AccountKey: storageAccount.listKeys().keys[0].value
     BaseUrl: storageAccount.properties.primaryEndpoints.blob
     ImageContainerName: 'weather-images'
+    FUNCTIONS_AUTH_LEVEL: 'anonymous'
   }
 }

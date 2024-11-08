@@ -1,0 +1,27 @@
+### Configuration
+
+@baseUrlStartJob = <insert-url>
+@baseUrlGetJob = <insert-url>
+@startJobFunctionCode = <insert-code>
+@getJobFunctionCode = <insert-code>
+
+### Start Image Generation Job
+
+POST {{baseUrlStartJob}}/api/startjob?code={{startJobFunctionCode}}
+Content-Type: application/json
+
+{
+}
+
+### Response
+
+- Capture the `jobId` from the response of the POST request above.
+- The `jobId` will be returned in the response body.
+
+### Get Job Status
+
+@jobId = <insert-jobid>
+
+GET {{baseUrlGetJob}}/api/jobs/{{jobId}}?code={{getJobFunctionCode}}
+
+- Replace `{{jobId}}` with the value obtained from the `POST` response.
